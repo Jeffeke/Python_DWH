@@ -1,8 +1,15 @@
 import pandas as pd
-import extract_data
+import extract_data_to_staging
+
+
+# Extract tables from the sources to the staging area
+# Data is filtered and cleaned during extraction
+# Staging area is still a classic normalized database
+def extract_tables_to_staging():
+    extract_data_to_staging.extract_DOCTOR()
 
 
 if __name__ == "__main__":
-    doctor_df = extract_data.extract_DOCTOR()
-    print(doctor_df.info())
-    print(doctor_df.head())
+    
+    extract_tables_to_staging()
+    

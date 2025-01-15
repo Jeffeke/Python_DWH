@@ -1,5 +1,11 @@
 import pyodbc
 import pandas as pd
+import time
+from sqlalchemy import create_engine
+
+server = "WS-VRAJE-01"
+database = "DWHTEST"
+engine = create_engine(f"mssql+pyodbc://@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes")
 
 conn = pyodbc.connect("DSN=MACSYS;UID=VRJ;PWD=jv321")
 
@@ -17,6 +23,8 @@ language_mapping = {
 }
 
 def extract_DOCTOR():
+
+    start_time = time.perf_counter()
 
     query = ("""SELECT 
                     GHNR05,
@@ -64,9 +72,17 @@ def extract_DOCTOR():
     df["gender"] = df["gender"].map(gender_mapping).fillna("Onbekend")  # Make gender codes verbose
     df["language"] = df["language"].map(language_mapping).fillna("Onbekend")  # Make language codes verbose
 
+    end_time = time.perf_counter()
 
+    print(f"Extracted DOCTOR in {end_time - start_time:0.2f} seconds")
 
-    return df
+    start_time = time.perf_counter()
+
+    df.to_sql("DOCTOR", con=engine, if_exists="replace", index=False)
+
+    end_time = time.perf_counter()
+
+    print(f"Loaded DOCTOR into staging area in {end_time - start_time:0.2f} seconds")
 
 
 
