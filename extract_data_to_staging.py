@@ -71,6 +71,7 @@ def extract_DOCTOR():
     #Preliminary transformations
     df["gender"] = df["gender"].map(gender_mapping).fillna("Onbekend")  # Make gender codes verbose
     df["language"] = df["language"].map(language_mapping).fillna("Onbekend")  # Make language codes verbose
+    df["group_practice_name"] = df["group_practice_name"].apply(lambda x: "GEEN" if x == "None" else x) # No null values
 
     end_time = time.perf_counter()
 
@@ -78,7 +79,7 @@ def extract_DOCTOR():
 
     start_time = time.perf_counter()
 
-    df.to_sql("DOCTOR", con=engine, if_exists="replace", index=False)
+    df.to_sql("DOCTOR", con=engine, if_exists="replace", index=False, schema="staging")
 
     end_time = time.perf_counter()
 
